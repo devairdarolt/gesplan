@@ -23,14 +23,14 @@ public class DemoApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {		
 		
 		
-		/*Contato c1 = new Contato(null, "Devair", "devairdarolt@gmail.com", "Darolt", "obs 1");
-		c1.getTelefones().add("(47) 9 9665-4736");
-		c1.getTelefones().add("(66) 6 6666-6666");
-		c1.getTelefones().add("(99) 9 9999-9999");
-		Contato c2 = new Contato(null, "Denilso", "denilsodarolt@gmail.com", "Darolt", "obs 2");
-		c2.getTelefones().add("(96) 9 9696-9696");
+		Contato c1 = new Contato(null, "Alfa", "alfadelta@omega.com", "Delta", "Observação 1");
+		c1.getTelefones().add("(11) 1 1111-1111");
+		c1.getTelefones().add("(22) 2 2222-2222");		
 		
-		contactRepository.saveAll(Arrays.asList(c1,c2));*/
+		Contato c2 = new Contato(null, "Beta", "betadelta@omega.com", "Delta", "Observação 2");
+		c2.getTelefones().add("(33) 3 3333-3333");
+		
+		contactRepository.saveAll(Arrays.asList(c1,c2));
 	}
 
 }

@@ -33,14 +33,15 @@
 		<hr />
 		<button type="button" class="btn btn-outline-success"
 			data-toggle="modal" data-target="#novoContatoModal">Novo</button>
-		<button type="button" class="btn btn-outline-danger">Excluir
-			os selecionados</button>
+		<button type="button" class="btn btn-outline-danger"
+			id="excluir-selecionados">Excluir os selecionados</button>
 		<br /> <br />
 
 		<table class="table table-bordered table-striped" id="contatoTable">
 
 			<thead>
 				<tr>
+					<th>Código</th>
 					<th>Nome</th>
 					<th>Sobrenome</th>
 					<th>Email</th>
@@ -52,6 +53,7 @@
 			</thead>
 			<tbody>
 				<tr th:each="contato: ${contatos}">
+					<td th:text="${contato.id}" />
 					<td th:text="${contato.nome}" />
 					<td th:text="${contato.sobrenome}" />
 					<td th:text="${contato.email}" />
@@ -162,9 +164,24 @@
 			</div>
 
 		</div>
-
-
 	</div>
+
+	<div id="error" class="modal fade bd-example-modal-sm" tabindex="-1"
+		role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Aviso</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">Nenhum contato foi selecionado.</div>
+			</div>
+		</div>
+	</div>
+
 
 
 	<script
@@ -199,16 +216,79 @@
 						function() {
 
 							var table = $("#contatoTable").DataTable({
+								"columnDefs" : [ {
+									"width" : "10%",
+									"targets" : 0
+								}, {
+									"width" : "10%",
+									"targets" : 1
+								}, {
+									"width" : "10%",
+									"targets" : 2
+								}, {
+									"width" : "10%",
+									"targets" : 3
+								}, {
+									"width" : "20%",
+									"targets" : 4
+								}, {
+									"width" : "30%",
+									"targets" : 5
+								}, {
+									"width" : "10%",
+									"targets" : 6
+								}, ],
 								'aoColumnDefs' : [ {
+									'title' : "Contatos",
+									"width" : "25%",
 									'bSortable' : false,
 									'aTargets' : [ -1 ]
 								/* 1st one, start by the right */
 								} ]
 							});
 
+							//Adiciona classe .selected em contatoTable para a row 
 							$('#contatoTable tbody').on('click', 'tr',
 									function() {
 										$(this).toggleClass('selected');
+									});
+
+							function getIds(selectedData) {
+								var ids = [];
+								for (var i = 0; i < selectedData.length; i++) {
+									ids.push(selectedData[i][0]);
+								}
+								return ids;
+							}
+							;
+
+							//Envia todos os selecionados para o Controller	usando Ajax							
+							$("#excluir-selecionados").click(
+									function() {
+										var selectedData = table.rows(
+												".selected").data().toArray();
+										var ids = getIds(selectedData);
+
+										$.ajax({
+											type : 'POST',
+											url : '/excluirSelecionados',
+											dataType : 'text',
+											contentType : "application/json",
+											accept : 'text/plain',
+											data : JSON.stringify(ids),
+											success : function() {												
+												location.reload();
+
+											},
+											error : function() {
+												$("#error").modal('toggle');
+
+											}
+
+										}).done(function() {
+											$(this).addClass("done");
+										});
+
 									});
 
 							$('#button')
